@@ -25,6 +25,7 @@ pub struct TransactionLog {
 }
 
 
+
 impl TransactionLog{
     pub fn new_empty() -> TransactionLog {
         TransactionLog {
@@ -43,5 +44,22 @@ impl TransactionLog{
         self.tail = Some(new);
         self.length += 1;
     }
+
+    pub fn pop(&mut self) -> Option<String> {
+        self.head.take().map(|head| {
+            if let Some(next) = head.borrow_mut().next.take() {
+                self.head = Some(next);
+            }else {
+                self.tail.take();
+            }
+            self.length -=1;
+            Rc::try_unwrap(head)
+                .ok()
+                .expect("Something went wrong")
+                .into_inner()
+                .value
+        })
+    }
+
 }
 
