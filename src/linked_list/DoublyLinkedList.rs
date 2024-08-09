@@ -33,6 +33,23 @@ impl Iterator for ListIterator {
 }
 
 
+impl DoubleEndedIterator for ListIterator {
+    fn next_back(&mut self) -> Option<String> {
+        let current = &self.current;
+        let mut result = None;
+        self.current = match current {
+            Some(ref current) => {
+                let current = current.borrow();
+                result = Some(current.value.clone());
+                current.prev.clone()
+            },
+            None => None
+        };
+        result
+    }
+}
+
+
 
 #[derive(Debug, Clone)]
 struct Node {
